@@ -12,16 +12,34 @@ function App() {
     { id: "id-4", name: "Annie Copeland", number: "227-91-26" },
   ];
 
+  const [searchValue, setSearchValue] = useState("");
+
+  const handleSearchValueChange = (evt) => {
+    setSearchValue(evt.target.value);
+  };
+
+  const filteredContacts = filterContacts(contacts, searchValue.trim());
   return (
     <>
       <div>
         <h1>Phonebook</h1>
         <ContactForm />
-        <SearchBox />
-        <ContactList contacts={contacts} />
+        <SearchBox
+          searchValue={searchValue}
+          onUpdate={handleSearchValueChange}
+        />
+        <ContactList contacts={filteredContacts} />
       </div>
     </>
   );
+}
+
+function filterContacts(contacts, searchValue) {
+  if (searchValue === "") return contacts;
+
+  return contacts.filter((contact) => {
+    return contact.name.toLowerCase().includes(searchValue.toLowerCase());
+  });
 }
 
 export default App;
