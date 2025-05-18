@@ -1,12 +1,22 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 import { nanoid } from "nanoid";
 import ContactForm from "./components/ContactForm/ContactForm";
 import SearchBox from "./components/SearchBox/SearchBox";
 import ContactList from "./components/ContactList/ContactList";
 
+const CONTACTS_KEY = "contacts";
+
 function App() {
+  // setup states
+  const [searchValue, setSearchValue] = useState("");
   const [contacts, setContacts] = useState(() => {
+    const savedContacts = window.localStorage.getItem(CONTACTS_KEY);
+
+    if (savedContacts) {
+      return JSON.parse(savedContacts);
+    }
+
     // initial state to simplify testing
     return [
       { id: "id-1", name: "Rosie Simpson", number: "459-12-56" },
@@ -16,12 +26,15 @@ function App() {
     ];
   });
 
-  const [searchValue, setSearchValue] = useState("");
+  // update local storage each time we have updated contacts
+  useEffect(() => {
+    window.localStorage.setItem(CONTACTS_KEY, JSON.stringify(contacts));
+  }, [contacts]);
 
+  // update state functions
   const handleSearchValueChange = (evt) => {
     setSearchValue(evt.target.value);
   };
-
   const handleSubmitUserData = (contactData) => {
     const newContact = {
       id: nanoid(),
@@ -30,11 +43,11 @@ function App() {
 
     setContacts([...contacts, newContact]);
   };
-
   const handleDeleteContact = (id) => {
     setContacts(contacts.filter((contact) => contact.id !== id));
   };
 
+  // render app
   const filteredContacts = filterContacts(contacts, searchValue.trim());
   return (
     <>
