@@ -1,5 +1,6 @@
 import { useState } from "react";
 import "./App.css";
+import { nanoid } from "nanoid";
 import ContactForm from "./components/ContactForm/ContactForm";
 import SearchBox from "./components/SearchBox/SearchBox";
 import ContactList from "./components/ContactList/ContactList";
@@ -18,12 +19,21 @@ function App() {
     setSearchValue(evt.target.value);
   };
 
+  const handleSubmitUserData = (userData) => {
+    const newUser = {
+      id: nanoid(),
+      ...userData,
+    };
+
+    console.log(newUser);
+  };
+
   const filteredContacts = filterContacts(contacts, searchValue.trim());
   return (
     <>
       <div>
         <h1>Phonebook</h1>
-        <ContactForm />
+        <ContactForm onSubmitUserData={handleSubmitUserData} />
         <SearchBox
           searchValue={searchValue}
           onUpdate={handleSearchValueChange}
