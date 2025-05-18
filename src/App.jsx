@@ -6,12 +6,15 @@ import SearchBox from "./components/SearchBox/SearchBox";
 import ContactList from "./components/ContactList/ContactList";
 
 function App() {
-  const contacts = [
-    { id: "id-1", name: "Rosie Simpson", number: "459-12-56" },
-    { id: "id-2", name: "Hermione Kline", number: "443-89-12" },
-    { id: "id-3", name: "Eden Clements", number: "645-17-79" },
-    { id: "id-4", name: "Annie Copeland", number: "227-91-26" },
-  ];
+  const [contacts, setContacts] = useState(() => {
+    // initial state to simplify testing
+    return [
+      { id: "id-1", name: "Rosie Simpson", number: "459-12-56" },
+      { id: "id-2", name: "Hermione Kline", number: "443-89-12" },
+      { id: "id-3", name: "Eden Clements", number: "645-17-79" },
+      { id: "id-4", name: "Annie Copeland", number: "227-91-26" },
+    ];
+  });
 
   const [searchValue, setSearchValue] = useState("");
 
@@ -19,13 +22,17 @@ function App() {
     setSearchValue(evt.target.value);
   };
 
-  const handleSubmitUserData = (userData) => {
-    const newUser = {
+  const handleSubmitUserData = (contactData) => {
+    const newContact = {
       id: nanoid(),
-      ...userData,
+      ...contactData,
     };
 
-    console.log(newUser);
+    setContacts([...contacts, newContact]);
+  };
+
+  const handleDeleteContact = (id) => {
+    setContacts(contacts.filter((contact) => contact.id !== id));
   };
 
   const filteredContacts = filterContacts(contacts, searchValue.trim());
@@ -38,7 +45,10 @@ function App() {
           searchValue={searchValue}
           onUpdate={handleSearchValueChange}
         />
-        <ContactList contacts={filteredContacts} />
+        <ContactList
+          contacts={filteredContacts}
+          onDelete={handleDeleteContact}
+        />
       </div>
     </>
   );
